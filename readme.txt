@@ -4,6 +4,8 @@ Contributors: manski
 Tags: mime-types, MIME, media, upload
 Author URI: http://manski.net
 Author: Sebastian Krysmanski
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0.0
 Tested up to: 3.4.2
 Stable tag: 1.0
@@ -35,3 +37,4 @@ Requirements: PHP 5.1 or higher
 
 == Screenshots ==
 
+1. Settings Panel
