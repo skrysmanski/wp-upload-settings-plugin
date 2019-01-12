@@ -16,6 +16,7 @@ class UnrestrictedUploadsPlugin
 
     private $mime_types = [];
     private $disallowed_mime_types = [];
+    private $warn_list = [];
     private $error_list = [];
     private $overwritable_file_exts = [];
 
@@ -85,8 +86,8 @@ class UnrestrictedUploadsPlugin
     {
         # For details, see "wp_check_filetype_and_ext()"
         if (extension_loaded('fileinfo')) {
-            $this->error_list[] = 'Warning: The PHP extension "fileinfo" is loaded. It may prevent you from uploading files even though you\'ve whitelisted them '
-                                . 'below (if fileinfo detects a different mime type than the one that is reported by this plugin). This is a security feature in Wordpress.';
+            $this->warn_list[] = 'The PHP extension "fileinfo" is loaded. It may prevent you from uploading files even though you\'ve whitelisted them '
+                               . 'below (if fileinfo detects a different mime type than the one that is reported by this plugin). This is a security feature in Wordpress.';
         }
 
         # Load file extensions for which overwrite warnings shall be suppressed.
@@ -117,24 +118,54 @@ class UnrestrictedUploadsPlugin
 
         # Load mime types from mime-types.txt
         $list = file(dirname(__FILE__) . '/mime-types.txt');
-        self::parse_mime_type_listing($list, $this->overwritable_file_exts, $this->mime_types, $this->error_list);
+        self::parse_mime_type_listing(
+            $list,
+            $this->overwritable_file_exts,
+            $this->mime_types,
+            $this->warn_list,
+            $this->error_list
+        );
 
         # Text files
         $list = get_option('uup_text_file_extensions', '');
-        self::parse_file_ext_list($list, self::TEXT_FILE_MIME_TYPE, $this->overwritable_file_exts, $this->mime_types, $this->error_list);
+        self::parse_file_ext_list(
+            $list,
+            self::TEXT_FILE_MIME_TYPE,
+            $this->overwritable_file_exts,
+            $this->mime_types,
+            $this->warn_list
+        );
 
         # Binary files
         $list = get_option('uup_binary_file_extensions', '');
-        self::parse_file_ext_list($list, self::BINARY_FILE_MIME_TYPE, $this->overwritable_file_exts, $this->mime_types, $this->error_list);
+        self::parse_file_ext_list(
+            $list,
+            self::BINARY_FILE_MIME_TYPE,
+            $this->overwritable_file_exts,
+            $this->mime_types,
+            $this->warn_list
+        );
 
         # Custom mime types
         $list = get_option('uup_custom_mime_types', '');
         $list = explode("\n", $list);
-        self::parse_mime_type_listing($list, $this->overwritable_file_exts, $this->mime_types, $this->error_list);
+        self::parse_mime_type_listing(
+            $list,
+            $this->overwritable_file_exts,
+            $this->mime_types,
+            $this->warn_list,
+            $this->error_list
+        );
 
         # Disallowed mime types
         $list = get_option('uup_disallowed_file_extensions', '');
-        self::parse_file_ext_list($list, "false", [], $this->disallowed_mime_types, $this->error_list);
+        self::parse_file_ext_list(
+            $list,
+            "false",
+            [],
+            $this->disallowed_mime_types,
+            $this->warn_list
+        );
 
         foreach ($this->disallowed_mime_types as $key => $value)
         {
@@ -142,7 +173,7 @@ class UnrestrictedUploadsPlugin
         }
     }
 
-    private static function parse_file_ext_list($list, $mime_type, $overwritable_file_exts, &$mime_types_map, &$error_list)
+    private static function parse_file_ext_list($list, $mime_type, $overwritable_file_exts, &$mime_types_map, &$warn_list)
     {
         $list = trim($list);
         if (empty($list))
@@ -156,12 +187,12 @@ class UnrestrictedUploadsPlugin
             $file_extension = trim($file_extension);
             if (empty($file_extension))
             {
-                $error_list[] = "Warning: Empty file extension in '$list'";
+                $warn_list[] = "Empty file extension in '$list'";
                 continue;
             }
             if ($file_extension[0] == '.')
             {
-                $error_list[] = "Warning: File extension with leading dot in '$list'";
+                $warn_list[] = "File extension with leading dot in '$list'";
                 $file_extension = substr($file_extension, 1);
             }
 
@@ -171,7 +202,7 @@ class UnrestrictedUploadsPlugin
                 $existing_val = @$mime_types_map[$file_extension];
                 if (!empty($existing_val) && $mime_type != $existing_val)
                 {
-                    $error_list[] = "Warning: Overwriting existing mime type '$existing_val' for file extension '.$file_extension' with new mime type '$mime_type'.";
+                    $warn_list[] = "Overwriting existing mime type '$existing_val' for file extension '.$file_extension' with new mime type '$mime_type'.";
                 }
             }
 
@@ -179,7 +210,7 @@ class UnrestrictedUploadsPlugin
         }
     }
 
-    private static function parse_mime_type_listing($lines, $overwritable_file_exts, &$mime_types_map, &$error_list)
+    private static function parse_mime_type_listing($lines, $overwritable_file_exts, &$mime_types_map, &$warn_list, &$error_list)
     {
         foreach ($lines as $line)
         {
@@ -193,7 +224,7 @@ class UnrestrictedUploadsPlugin
             $parts = explode(':', $line);
             if (count($parts) != 2)
             {
-                $error_list[] = "Error: Invalid mime types line '$line'";
+                $error_list[] = "Invalid mime types line '$line'";
                 continue;
             }
 
@@ -201,11 +232,11 @@ class UnrestrictedUploadsPlugin
             $mime_type = trim($mime_type);
             if (empty($mime_type))
             {
-                $error_list[] = "Error: No mime type specified in line '$line'";
+                $error_list[] = "No mime type specified in line '$line'";
                 continue;
             }
 
-            self::parse_file_ext_list($file_extensions, $mime_type, $overwritable_file_exts, $mime_types_map, $error_list);
+            self::parse_file_ext_list($file_extensions, $mime_type, $overwritable_file_exts, $mime_types_map, $warn_list, $error_list);
         }
     }
 
@@ -243,19 +274,25 @@ class UnrestrictedUploadsPlugin
 <?php
         }
 
-        $error_count = count($this->error_list);
-        if ($error_count == 0)
+        if (count($this->error_list) != 0)
         {
-            return;
+            echo '<div class="notice notice-error">';
+            foreach ($this->error_list as $notice)
+            {
+                echo "<p>Error: $notice</p>\n";
+            }
+            echo '</div>';
         }
 
-        echo '<div class="notice notice-error">';
-        foreach ($this->error_list as $error)
+        if (count($this->warn_list) != 0)
         {
-            echo "<p>$error</p>\n";
+            echo '<div class="notice notice-warning">';
+            foreach ($this->warn_list as $notice)
+            {
+                echo "<p>Warning: $notice</p>\n";
+            }
+            echo '</div>';
         }
-        echo '</div>';
-
 ?>
 <div class="wrap">
     <h2>Upload File Type Settings</h2>
