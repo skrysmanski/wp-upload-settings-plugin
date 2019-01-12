@@ -1,5 +1,6 @@
 === Upload File Type Settings Plugin ===
 Plugin Name: Upload File Type Settings Plugin
+Stable tag: 1.1
 Contributors: manski
 Tags: mime-types, MIME, media, upload
 Author URI: http://manski.net
@@ -8,7 +9,6 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0.0
 Tested up to: 3.4.2
-Stable tag: 1.0
 
 This plugin allows admins to specify additional file types that are allowed for uploading to the blog.
 
@@ -31,6 +31,10 @@ Requirements: PHP 5.1 or higher
 
 
 == Changelog ==
+
+= 1.1 =
+* Fix: File extensions for binary files could not be saved
+
 = 1.0 =
 * First release
 

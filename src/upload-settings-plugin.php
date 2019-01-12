@@ -251,7 +251,7 @@ class UnrestrictedUploadsPlugin
     {
         //register our settings
         register_setting('uup-settings-group', 'uup_text_file_extensions');
-        register_setting('uup-settings-group', 'uup_binary_file_extension');
+        register_setting('uup-settings-group', 'uup_binary_file_extensions');
         register_setting('uup-settings-group', 'uup_disallowed_file_extensions');
         register_setting('uup-settings-group', 'uup_custom_mime_types');
         register_setting('uup-settings-group', 'uup_allowed_file_ext_overwriting');
