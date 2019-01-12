@@ -58,6 +58,31 @@ class UnrestrictedUploadsPlugin
         }
     }
 
+    /**
+     * [Filter Function] Adds additional mime types for file uploads.
+     */
+    public function _extend_mime_types($mime_types)
+    {
+        foreach ($this->mime_types as $file_ext => $mime_type)
+        {
+            $existing_mime_type = @$mime_types[$file_ext];
+            if (!empty($existing_mime_type) && ($mime_type == self::TEXT_FILE_MIME_TYPE || $mime_type == self::BINARY_FILE_MIME_TYPE))
+            {
+                # There exist a more specific mime type already. Don't overwrite it.
+                continue;
+            }
+
+            $mime_types[$file_ext] = $mime_type;
+        }
+
+        foreach ($this->disallowed_mime_types as $file_ext => $unused)
+        {
+            unset($mime_types[$file_ext]);
+        }
+
+        return $mime_types;
+    }
+
     private function init_mime_types()
     {
         # Load file extensions for which overwrite warnings shall be suppressed.
@@ -211,31 +236,6 @@ class UnrestrictedUploadsPlugin
             echo "<p>$error</p>\n";
         }
         echo '</div>';
-    }
-
-    /**
-     * [Filter Function] Adds additional mime types for file uploads.
-     */
-    public function _extend_mime_types($mime_types)
-    {
-        foreach ($this->mime_types as $file_ext => $mime_type)
-        {
-            $existing_mime_type = @$mime_types[$file_ext];
-            if (!empty($existing_mime_type) && ($mime_type == self::TEXT_FILE_MIME_TYPE || $mime_type == self::BINARY_FILE_MIME_TYPE))
-            {
-                # There exist a more specific mime type already. Don't overwrite it.
-                continue;
-            }
-
-            $mime_types[$file_ext] = $mime_type;
-        }
-
-        foreach ($this->disallowed_mime_types as $file_ext => $unused)
-        {
-            unset($mime_types[$file_ext]);
-        }
-
-        return $mime_types;
     }
 
     public function _create_settings_menu()
