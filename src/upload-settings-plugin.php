@@ -36,6 +36,7 @@ class UnrestrictedUploadsPlugin {
 
     $this->init_mime_types();
 
+    # https://developer.wordpress.org/reference/hooks/upload_mimes/
     add_filter('upload_mimes', array($this, '_extend_mime_types'));
 
     add_action('admin_init', array($this, '_register_settings'));
