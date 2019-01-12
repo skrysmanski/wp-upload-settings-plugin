@@ -35,6 +35,7 @@ Requirements: PHP 5.1 or higher
 = 1.1 =
 * Fix: File extensions for binary files could not be saved
 * Fix: Disabled warning when overwriting an existing file extension with the same mime type it already had.
+* Change: Errors and warnings from this plugin now only show on the plugin's settings page.
 
 = 1.0 =
 * First release

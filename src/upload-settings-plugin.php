@@ -45,8 +45,6 @@ class UnrestrictedUploadsPlugin
 
         add_action('admin_init', [$this, '_register_settings']);
         add_action('admin_menu', [$this, '_create_settings_menu']);
-
-        add_action('admin_notices', [$this, '_display_admin_error_notice']);
     }
 
     public static function init()
@@ -211,39 +209,6 @@ class UnrestrictedUploadsPlugin
         }
     }
 
-    public function _display_admin_error_notice()
-    {
-        if (!current_user_can('manage_options'))
-        {
-            return;
-        }
-
-        if (isset($this->mime_types['php']) && !isset($this->overwritable_file_exts['php']))
-        {
-?>
-<div class="error">
-    <p><b>Important:</b> The file extension <code>.php</code> is allowed for upload. This is potentially a very serious security risk
-        unless you know what you're doing. If you've added this file extension by accident, remove it in the Unrestricted
-        Uploads Plugin settings.</p>
-</div>
-<?php
-        }
-
-        $error_count = count($this->error_list);
-        if ($error_count == 0)
-        {
-            return;
-        }
-
-        echo '<div class="updated">';
-        echo '<p><b>Warnings/Errors for the Unrestricted Upload Plugin:</b></p>';
-        foreach ($this->error_list as $error)
-        {
-            echo "<p>$error</p>\n";
-        }
-        echo '</div>';
-    }
-
     public function _create_settings_menu()
     {
         # create new top-level menu
@@ -265,6 +230,32 @@ class UnrestrictedUploadsPlugin
 
     public function _settings_page()
     {
+        if (isset($this->mime_types['php']) && !isset($this->overwritable_file_exts['php']))
+        {
+?>
+<div class="notice notice-error">
+    <p>
+        <b>Important:</b> The file extension <code>.php</code> is allowed for upload. This is potentially a <b>very serious security risk</b>
+        unless you know what you're doing. If you've added this file extension by accident, remove it in the Unrestricted
+        Uploads Plugin settings.
+    </p>
+</div>
+<?php
+        }
+
+        $error_count = count($this->error_list);
+        if ($error_count == 0)
+        {
+            return;
+        }
+
+        echo '<div class="notice notice-error">';
+        foreach ($this->error_list as $error)
+        {
+            echo "<p>$error</p>\n";
+        }
+        echo '</div>';
+
 ?>
 <div class="wrap">
     <h2>Upload File Type Settings</h2>
