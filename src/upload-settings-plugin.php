@@ -1,11 +1,13 @@
 <?php
 /*
 Plugin Name: Upload File Type Settings Plugin
-Plugin URI:
+Plugin URI: https://github.com/skrysmanski/wp-upload-settings-plugin
 Description: Allows admins to specify additional file types that are allowed for uploading to the blog.
-Version: 1.0
+Version: 1.1
 Author: Sebastian Krysmanski
+Author URI: https://manski.net/
 */
+# ^-- https://developer.wordpress.org/plugins/the-basics/header-requirements/
 
 class UnrestrictedUploadsPlugin
 {

@@ -3,12 +3,11 @@ Plugin Name: Upload File Type Settings Plugin
 Stable tag: 1.1
 Contributors: manski
 Tags: mime-types, MIME, media, upload
-Author URI: http://manski.net
-Author: Sebastian Krysmanski
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Requires PHP: 5.6
+License: GPLv3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 3.0.0
-Tested up to: 3.4.2
+Tested up to: 5.0.3
 
 This plugin allows admins to specify additional file types that are allowed for uploading to the blog.
 
@@ -24,7 +23,6 @@ and video files (avi, mkv, ...).
 
 
 == Installation ==
-Requirements: PHP 5.1 or higher
 
 1. Upload the **upload-settings-plugin** folder to the **/wp-content/plugins/** directory
 2. *Activate* the plugin through the *Plugins* menu in WordPress
