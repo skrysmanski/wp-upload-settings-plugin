@@ -1,2 +1,5 @@
 /dist
 /dist-zip
+
+# Via: https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
+.idea/**/workspace.xml
