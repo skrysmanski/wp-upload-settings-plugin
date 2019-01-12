@@ -1,0 +1,18 @@
+{
+    "ProjectName": "upload-settings-plugin",
+
+    "Mounts": [
+        {
+            "Host": "src",
+            "Container": "wp-content/plugins/upload-settings-plugin",
+            "ReadOnly": true
+        }
+    ],
+
+    "SetupCommands": [
+        {
+            "Title": "Activating plugin 'Upload Settings'...",
+            "CommandArgs": [ "plugin", "activate", "upload-settings-plugin" ]
+        }
+    ]
+}
