@@ -165,7 +165,7 @@ class UnrestrictedUploadsPlugin
             if (!isset($overwritable_file_exts[$file_extension]))
             {
                 $existing_val = @$mime_types_map[$file_extension];
-                if (!empty($existing_val))
+                if (!empty($existing_val) && $mime_type != $existing_val)
                 {
                     $error_list[] = "Warning: Overwriting existing mime type '$existing_val' for file extension '.$file_extension' with new mime type '$mime_type'.";
                 }
