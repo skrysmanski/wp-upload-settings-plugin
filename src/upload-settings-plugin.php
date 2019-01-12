@@ -85,6 +85,12 @@ class UnrestrictedUploadsPlugin
 
     private function init_mime_types()
     {
+        # For details, see "wp_check_filetype_and_ext()"
+        if (extension_loaded('fileinfo')) {
+            $this->error_list[] = 'Warning: The PHP extension "fileinfo" is loaded. It may prevent you from uploading files even though you\'ve whitelisted them '
+                                . 'below (if fileinfo detects a different mime type than the one that is reported by this plugin). This is a security feature in Wordpress.';
+        }
+
         # Load file extensions for which overwrite warnings shall be suppressed.
         $this->overwritable_file_exts = [];
         $overwritable_file_exts = trim(get_option('uup_allowed_file_ext_overwriting', ''));
